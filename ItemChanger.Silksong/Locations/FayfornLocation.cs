@@ -28,8 +28,12 @@ public class FayfornLocation : AutoLocation
                 fsm.SendEvent(Placement!.AllObtained() ? "TRUE" : "FALSE")
             });
 
-        // Remove only the hasDoubleJump ability grant from "Fade Back" — preserve any other
-        // SetPlayerDataVariable actions (e.g. the disablePause reset) so control restoration works.
+        // This FSM sets "hasDoubleJump" twice, both when it removes the ability to pause and when it restores it
+        // Remove only the hasDoubleJump ability grants from "Break Tuning Fork" and "Fade Back"
+        // Preserve any other SetPlayerDataVariable actions (e.g. changes to disablePause) so control restoration works.
+        fsm.MustGetState("Break Tuning Fork").Actions = fsm.MustGetState("Break Tuning Fork").Actions
+            .Where(a => !(a is SetPlayerDataVariable spd && spd.VariableName.Value == "hasDoubleJump"))
+            .ToArray();
         fsm.MustGetState("Fade Back").Actions = fsm.MustGetState("Fade Back").Actions
             .Where(a => !(a is SetPlayerDataVariable spd && spd.VariableName.Value == "hasDoubleJump"))
             .ToArray();
