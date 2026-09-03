@@ -29,6 +29,7 @@ internal class FleaLocationTest : Test
         }
 
         // for use with mapwarp to quickly navigate to each flea scene
+        // TODO: this may break if flea pin functionality changes in the future
         Placement fleaFindings = Finder.GetLocation(LocationNames.Start)!.Wrap();
         foreach (string item in Finder.ItemNames.Where(x => x.StartsWith("Flea_Findings")))
         {

@@ -202,7 +202,7 @@ internal static partial class BaseLocationList
         "Flea Rescue Barrel",
         FleaContainerType.Barrel,
         elevation: BARREL_ELEVATION
-        );
+    ).WithTag(new SendEventToRegisterOnGiveTag() { Event = "FLEA RESCUED" });
 
     public static Location Flea__shadow_10 => CreateFleaLocation(
         LocationNames.Flea__Bilewater_Upper,
@@ -258,7 +258,7 @@ internal static partial class BaseLocationList
         "Flea Scene/Flea Rescue Cage",
         FleaContainerType.AntCage,
         elevation: ANT_CAGE_ELEVATION
-        );
+    ).WithTag(new SendEventToRegisterOnGiveTag() { Event = "CAGE BROKEN" } );
 
     public static Location Flea__bone_06 => CreateFleaLocation(
         LocationNames.Flea__Marrow_Upper,
