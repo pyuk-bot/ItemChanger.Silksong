@@ -1,4 +1,6 @@
 ﻿using Benchwarp.Data;
+using ItemChanger.Placements;
+using ItemChanger.Silksong.RawData;
 
 namespace ItemChangerTesting.LocationTests;
 
@@ -25,5 +27,13 @@ internal class FleaLocationTest : Test
                 .WithDebugItem()
                 );
         }
+
+        // for use with mapwarp to quickly navigate to each flea scene
+        Placement fleaFindings = Finder.GetLocation(LocationNames.Start)!.Wrap();
+        foreach (string item in Finder.ItemNames.Where(x => x.StartsWith("Flea_Findings")))
+        {
+            fleaFindings.Add(Finder.GetItem(item)!);
+        }
+        Profile.AddPlacement(fleaFindings);
     }
 }
