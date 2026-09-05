@@ -36,7 +36,7 @@ public class SlabKidnappingModule : Module
     /// An <see cref="IValueProvider{T}"/> describing whether Slab Wardens should be available throughout Pharloom.
     /// Defaults to constant true.
     /// </summary>
-    public IValueProvider<bool> SlabCaptureIsAvailable { get; init; } = new BoxedBool { Value = false };
+    public IValueProvider<bool> SlabCaptureIsAvailable { get; init; } = new BoxedBool { Value = true };
 
     /// <summary>
     /// An <see cref="IValueProvider{T}"/> describing whether Slab Wardens are able to capture Hornet while she is
@@ -104,6 +104,13 @@ public class SlabKidnappingModule : Module
         });
 
         FsmState roostingState = fsm.MustGetState("Roosting");
+        if (SlabCaptureIsAvailable.Value)
+        {
+            // vanilla: a separate set of enemies under the Roosting Enemies parent object are spawned when Moorwing is roosting
+            // Prevent them from spawning when the wardenfly is present, as one of of the Roosting Enemies patrols the same area
+            roostingState.RemoveLastActionOfType<ActivateGameObject>();
+            roostingState.RemoveLastActionOfType<SetParent>();
+        }
         roostingState.AddTransition("SPAWN JAILER", "Jailer");
         roostingState.AddLambdaMethod(_ =>
         {
