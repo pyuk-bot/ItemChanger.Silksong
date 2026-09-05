@@ -31,7 +31,9 @@ public class SplitClawline : CustomSkillModule
     /// </summary>
     [JsonIgnore] public bool hasHarpoonDashBoth { get => (hasHarpoonDashLeft && hasHarpoonDashRight) || hasHarpoonDashInternal; }
     /// <summary>
-    /// Overrides base-game checks for clawline according to facing direction.
+    /// Overrides base-game checks for clawline according to facing and holding direction as well as wall-sliding state.
+    /// Wall sliding overrides holding direction which overrides facing direction.
+    /// FIXME: Also applies to story progression, such as TimePasses events, and other checks like Grindle selling Snitch Pick.
     /// </summary>
     [JsonIgnore]
     public bool hasHarpoonDash
@@ -39,8 +41,22 @@ public class SplitClawline : CustomSkillModule
         get
         {
             if (hasHarpoonDashBoth) return true;
+            if (!hasHarpoonDashAny) return false;
+            // Now that we've already checked for has both and has neither,
+            // hasHarpoonDashRight is guaranteed to be the opposite of hasHarpoonDashLeft
             if (HeroController.SilentInstance is not HeroController hc || !hc) return false;
-            return hc.cState.facingRight ? hasHarpoonDashRight : hasHarpoonDashLeft;
+            // Check directional input to prevent turning around and clawlining on the same frame
+            bool holdingRight = hc.inputHandler.inputActions.Right.IsPressed;
+            bool holdingLeft = hc.inputHandler.inputActions.Left.IsPressed;
+            // Also check wall sliding direction
+            // Wall sliding forces clawlines to always come out in the opposite direction from hc.cState's facing direction
+            // Can't just use hc.wallSlidingL/R because those are both false during a walldash, which also inverts clawline
+            // Scuttlebracing up walls doesn't set these values, but it also doesn't force clawline direction, so it's fine
+            if (hc.cState.wallSliding || hc.cState.wallScrambling)
+            {
+                return hasHarpoonDashRight != hc.cState.facingRight;
+            }
+            return hasHarpoonDashRight == (holdingRight == holdingLeft) && hc.cState.facingRight || holdingRight;
         }
     }
 #pragma warning restore IDE1006, CA1822 // Naming Styles, Member can be made static
