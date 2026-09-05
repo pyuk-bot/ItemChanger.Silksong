@@ -56,7 +56,7 @@ public class SplitClawline : CustomSkillModule
             {
                 return hasHarpoonDashRight != hc.cState.facingRight;
             }
-            return hasHarpoonDashRight == (holdingRight == holdingLeft) && hc.cState.facingRight || holdingRight;
+            return hasHarpoonDashRight == ((holdingRight == holdingLeft) && hc.cState.facingRight || holdingRight);
         }
     }
 #pragma warning restore IDE1006, CA1822 // Naming Styles, Member can be made static
