@@ -79,16 +79,18 @@ public class SplitNeedle : CustomSkillModule
 
     protected override void DoLoad()
     {
+        base.DoLoad();
         Using(Md.HeroController.Attack.ControlFlowPrefix(AbortAttack));
     }
 
     private ReturnFlow AbortAttack(HeroController self, ref AttackDirection dir)
     {
+        bool willSlashRight = HeroWillActToRight(self, LPlusR.Neutral);
         switch (dir)
         {
             case AttackDirection.upward when !hasUpslash:
             case AttackDirection.downward when !hasDownslash:
-            case AttackDirection.normal when (self.cState.facingRight && !hasRightslash || !self.cState.facingRight && !hasLeftslash):
+            case AttackDirection.normal when willSlashRight && !hasRightslash || !willSlashRight && !hasLeftslash:
                 return ReturnFlow.SkipOriginal;
         }
         return ReturnFlow.None;

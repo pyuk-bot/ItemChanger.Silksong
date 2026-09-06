@@ -47,7 +47,7 @@ public abstract class CustomSkillModule : Module
     /// <returns>
     /// A boolean representing if Hornet will act to the right
     /// </returns>
-    protected static bool HeroWillActToRight(HeroController hc, LPlusR LeftPlusRightBias)
+    protected virtual bool HeroWillActToRight(HeroController hc, LPlusR LeftPlusRightBias)
     {
         // Check directional input to prevent turning around and clawlining on the same frame
         bool holdingRight = hc.inputHandler.inputActions.Right.IsPressed;
