@@ -52,11 +52,17 @@ public class SplitClawline : CustomSkillModule
             // Wall sliding forces clawlines to always come out in the opposite direction from hc.cState's facing direction
             // Can't just use hc.wallSlidingL/R because those are both false during a walldash, which also inverts clawline
             // Scuttlebracing up walls doesn't set these values, but it also doesn't force clawline direction, so it's fine
+            bool right;
             if (hc.cState.wallSliding || hc.cState.wallScrambling)
             {
-                return hasHarpoonDashRight != hc.cState.facingRight;
+                right = !hc.cState.facingRight;
             }
-            return hasHarpoonDashRight == ((holdingRight == holdingLeft) && hc.cState.facingRight || holdingRight);
+            else
+            {
+                // Vanilla behavior for clawlining while holding left+right is to always clawline to the right
+                right = holdingRight || hc.cState.facingRight && !holdingLeft;
+            }
+            return hasHarpoonDashRight == right;
         }
     }
 #pragma warning restore IDE1006, CA1822 // Naming Styles, Member can be made static
