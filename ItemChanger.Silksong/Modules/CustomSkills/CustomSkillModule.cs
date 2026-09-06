@@ -1,4 +1,6 @@
 ﻿using ItemChanger.Modules;
+using Md.HeroController;
+using UnityEngine.InputSystem.Controls;
 
 namespace ItemChanger.Silksong.Modules.CustomSkills;
 
@@ -32,4 +34,45 @@ public abstract class CustomSkillModule : Module
     protected override void DoLoad() => ActiveProfile!.Modules.GetOrAdd<CustomSkillPlayerDataModule>().Register(this);
     protected override void DoUnload() { }
     protected ArgumentException UnsupportedBoolName(string boolName) => new($"Bool {boolName} is not supported by module {GetType().Name}.", nameof(boolName));
+    
+    protected enum LPlusR
+    {
+        Neutral,
+        Left,
+        Right,
+    }
+    /// <summary>
+    /// Determines which direction Hornet will act in (left or right) for split skill modules
+    /// </summary>
+    /// <returns>
+    /// A boolean representing if Hornet will act to the right
+    /// </returns>
+    protected static bool HeroWillActToRight(HeroController hc, LPlusR LeftPlusRightBias)
+    {
+        // Check directional input to prevent turning around and clawlining on the same frame
+        bool holdingRight = hc.inputHandler.inputActions.Right.IsPressed;
+        bool holdingLeft = hc.inputHandler.inputActions.Left.IsPressed;
+        // Also check wall sliding state because Hornet faces into the wall when sliding
+        // Wall sliding forces lateral actions to always come out in the opposite direction from hc.cState's facing direction
+        // Can't just use hc.wallSlidingL/R because those are both false during a walldash, which also inverts actions
+        // Scuttlebracing up walls doesn't set these values, but it also doesn't invert action direction, so it's fine
+        if (hc.cState.wallSliding || hc.cState.wallScrambling)
+        {
+            return !hc.cState.facingRight;
+        }
+        else if (holdingRight)
+        {
+            switch (LeftPlusRightBias)
+            {
+                case LPlusR.Left: return !holdingLeft;
+                case LPlusR.Neutral: return !holdingLeft || hc.cState.facingRight;
+                case LPlusR.Right: return true;
+                default: throw new ArgumentException($"Unsupported value {LeftPlusRightBias} given for LeftPlusRightBias");
+            }
+        }
+        else
+        {
+            return !holdingLeft && hc.cState.facingRight;
+        }
+    }
 }

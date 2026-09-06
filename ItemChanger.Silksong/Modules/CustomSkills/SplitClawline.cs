@@ -42,27 +42,8 @@ public class SplitClawline : CustomSkillModule
         {
             if (hasHarpoonDashBoth) return true;
             if (!hasHarpoonDashAny) return false;
-            // Now that we've already checked for has both and has neither,
-            // hasHarpoonDashRight is guaranteed to be the opposite of hasHarpoonDashLeft
             if (HeroController.SilentInstance is not HeroController hc || !hc) return false;
-            // Check directional input to prevent turning around and clawlining on the same frame
-            bool holdingRight = hc.inputHandler.inputActions.Right.IsPressed;
-            bool holdingLeft = hc.inputHandler.inputActions.Left.IsPressed;
-            // Also check wall sliding direction
-            // Wall sliding forces clawlines to always come out in the opposite direction from hc.cState's facing direction
-            // Can't just use hc.wallSlidingL/R because those are both false during a walldash, which also inverts clawline
-            // Scuttlebracing up walls doesn't set these values, but it also doesn't force clawline direction, so it's fine
-            bool right;
-            if (hc.cState.wallSliding || hc.cState.wallScrambling)
-            {
-                right = !hc.cState.facingRight;
-            }
-            else
-            {
-                // Vanilla behavior for clawlining while holding left+right is to always clawline to the right
-                right = holdingRight || hc.cState.facingRight && !holdingLeft;
-            }
-            return hasHarpoonDashRight == right;
+            return HeroWillActToRight(hc, LPlusR.Right) == hasHarpoonDashRight;
         }
     }
 #pragma warning restore IDE1006, CA1822 // Naming Styles, Member can be made static
