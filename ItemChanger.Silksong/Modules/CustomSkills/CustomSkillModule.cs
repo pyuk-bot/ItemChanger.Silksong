@@ -45,11 +45,11 @@ public abstract class CustomSkillModule : Module
     /// Determines which direction Hornet will act in (left or right) for split skill modules
     /// </summary>
     /// <returns>
-    /// A boolean representing if Hornet will act to the right
+    /// `true` if Hornet will act to the right, `false` if Hornet will act to the left
     /// </returns>
     protected virtual bool HeroWillActToRight(HeroController hc, LPlusR LeftPlusRightBias)
     {
-        // Check directional input to prevent turning around and clawlining on the same frame
+        // Check directional input to prevent turning around on the same frame the action is performed
         bool holdingRight = hc.inputHandler.inputActions.Right.IsPressed;
         bool holdingLeft = hc.inputHandler.inputActions.Left.IsPressed;
         // Also check wall sliding state because Hornet faces into the wall when sliding
