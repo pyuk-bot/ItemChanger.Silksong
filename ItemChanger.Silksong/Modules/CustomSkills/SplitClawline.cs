@@ -43,6 +43,8 @@ public class SplitClawline : CustomSkillModule
             if (hasHarpoonDashBoth) return true;
             if (!hasHarpoonDashAny) return false;
             if (HeroController.SilentInstance is not HeroController hc || !hc) return false;
+            // if hasHarpoonDashAny is true, then !hasHarpoonDashRight implies hasHarpoonDashLeft
+            // so if both the values below are false, then Hornet will clawline to the left and must have left clawline
             return HeroWillActToRight(hc, LPlusR.Right) == hasHarpoonDashRight;
         }
     }

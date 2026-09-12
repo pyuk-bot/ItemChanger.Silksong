@@ -44,6 +44,14 @@ public abstract class CustomSkillModule : Module
     /// <summary>
     /// Determines which direction Hornet will act in (left or right) for split skill modules
     /// </summary>
+    /// <param name="hc">HeroController instance</param>
+    /// <param name="LeftPlusRightBias">
+    /// The direction Hornet will act in when the player is holding both left and right at the same time.
+    /// If Hornet will always act to the left regardless of her facing direction, then this should be `LPlusR.Left`,
+    /// and similar for the right. If Hornet will always act in her facing direction, then this should be `LPlusR.Neutral`.
+    /// Test in-game to see which bias is appropriate for a given skill. If the skill has multiple biases depending on context,
+    /// override this function to handle them appropriately.
+    /// </param>
     /// <returns>
     /// `true` if Hornet will act to the right, `false` if Hornet will act to the left
     /// </returns>
